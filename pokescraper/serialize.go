@@ -2,6 +2,7 @@ package pokescraper
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // returns Pokemon data as JSON string
@@ -21,14 +22,14 @@ func SerializePokemon(poke Pokemon) (string, error) {
 
 // returns Pokemon data as struct
 func DeserializePokemon(pokeJSON string, pokePoint *Pokemon) error {
+	err := json.Unmarshal([]byte(pokeJSON), pokePoint)
+	if err != nil {
+		return fmt.Errorf("Error Unmarshaling deserialized data: %v\n", err)
+	}
+
 	invalidErr := ValidatePokemon(*pokePoint)
 	if invalidErr != nil {
 		return invalidErr
-	}
-
-	err := json.Unmarshal([]byte(pokeJSON), pokePoint)
-	if err != nil {
-		return err
 	}
 
 	return nil
