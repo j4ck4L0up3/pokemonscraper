@@ -1,54 +1,56 @@
-package pokescraper
+package tests
 
 import (
 	"encoding/json"
 	"reflect"
 	"testing"
+
+	"github.com/jack-gaskins/pokemonscraper/pokescraper"
 )
 
 func TestSerializePokemon(t *testing.T) {
 	tests := []struct {
 		name         string
-		expectedPoke *Pokemon
-		actualPoke   *Pokemon
+		expectedPoke *pokescraper.Pokemon
+		actualPoke   *pokescraper.Pokemon
 		wantErr      bool
 	}{
 		{
 			name:         "Pikachu test",
-			expectedPoke: &Pokemon{ID: "025", Name: "pikachu", Type: []string{"electic"}},
-			actualPoke:   &Pokemon{},
+			expectedPoke: &pokescraper.Pokemon{ID: "025", Name: "pikachu", Type: []string{"electic"}},
+			actualPoke:   &pokescraper.Pokemon{},
 			wantErr:      false,
 		},
 		{
 			name:         "Charizard test",
-			expectedPoke: &Pokemon{ID: "006", Name: "charizard", Type: []string{"fire", "flying"}},
-			actualPoke:   &Pokemon{},
+			expectedPoke: &pokescraper.Pokemon{ID: "006", Name: "charizard", Type: []string{"fire", "flying"}},
+			actualPoke:   &pokescraper.Pokemon{},
 			wantErr:      false,
 		},
 		{
 			name:         "empty Pokemon struct test",
-			expectedPoke: &Pokemon{},
-			actualPoke:   &Pokemon{},
+			expectedPoke: &pokescraper.Pokemon{},
+			actualPoke:   &pokescraper.Pokemon{},
 			wantErr:      true,
 		},
 		{
 			name:         "partial Pokemon struct test",
-			expectedPoke: &Pokemon{ID: "001", Name: "bulbasaur"},
-			actualPoke:   &Pokemon{},
+			expectedPoke: &pokescraper.Pokemon{ID: "001", Name: "bulbasaur"},
+			actualPoke:   &pokescraper.Pokemon{},
 			wantErr:      true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, serializeErr := SerializePokemon(*tt.expectedPoke)
+			got, serializeErr := pokescraper.SerializePokemon(*tt.expectedPoke)
 			if (serializeErr != nil) != tt.wantErr {
 				t.Fatalf("error during serialization: %v", serializeErr)
 			}
 
-			emptyPoke := Pokemon{}
+			emptyPoke := pokescraper.Pokemon{}
 			if serializeErr != nil && tt.wantErr && got == "" &&
-				(IsEmptyPokemon(emptyPoke, *tt.expectedPoke) ||
-					IsPartialPokemon(*tt.expectedPoke)) {
+				(pokescraper.IsEmptyPokemon(emptyPoke, *tt.expectedPoke) ||
+					pokescraper.IsPartialPokemon(*tt.expectedPoke)) {
 				t.Log("intentional serializeErr occurred")
 				return
 			}
@@ -59,7 +61,7 @@ func TestSerializePokemon(t *testing.T) {
 			}
 
 			if !reflect.DeepEqual(*tt.expectedPoke, *tt.actualPoke) {
-				t.Fatalf("actual Pokemon does not match expected.\nactual Pokemon: %v\nexpected Pokemon: %v", *tt.expectedPoke, *tt.actualPoke)
+				t.Fatalf("actual pokescraper.Pokemon does not match expected.\nactual Pokemon: %v\nexpected Pokemon: %v", *tt.expectedPoke, *tt.actualPoke)
 			}
 		})
 	}
@@ -69,36 +71,36 @@ func TestDeserializePokemon(t *testing.T) {
 	tests := []struct {
 		name       string
 		inputStr   *string
-		inputPoke  *Pokemon
-		actualPoke *Pokemon
+		inputPoke  *pokescraper.Pokemon
+		actualPoke *pokescraper.Pokemon
 		wantErr    bool
 	}{
 		{
 			name:       "pikachu test",
 			inputStr:   new(string),
-			inputPoke:  &Pokemon{ID: "025", Name: "pikachu", Type: []string{"electic"}},
-			actualPoke: &Pokemon{},
+			inputPoke:  &pokescraper.Pokemon{ID: "025", Name: "pikachu", Type: []string{"electic"}},
+			actualPoke: &pokescraper.Pokemon{},
 			wantErr:    false,
 		},
 		{
 			name:       "charizard test",
 			inputStr:   new(string),
-			inputPoke:  &Pokemon{ID: "006", Name: "charizard", Type: []string{"fire", "flying"}},
-			actualPoke: &Pokemon{},
+			inputPoke:  &pokescraper.Pokemon{ID: "006", Name: "charizard", Type: []string{"fire", "flying"}},
+			actualPoke: &pokescraper.Pokemon{},
 			wantErr:    false,
 		},
 		{
 			name:       "empty Pokemon struct test",
 			inputStr:   new(string),
-			inputPoke:  &Pokemon{},
-			actualPoke: &Pokemon{},
+			inputPoke:  &pokescraper.Pokemon{},
+			actualPoke: &pokescraper.Pokemon{},
 			wantErr:    true,
 		},
 		{
 			name:       "partial Pokemon struct test",
 			inputStr:   new(string),
-			inputPoke:  &Pokemon{ID: "001", Name: "bulbasaur"},
-			actualPoke: &Pokemon{},
+			inputPoke:  &pokescraper.Pokemon{ID: "001", Name: "bulbasaur"},
+			actualPoke: &pokescraper.Pokemon{},
 			wantErr:    true,
 		},
 	}
@@ -110,20 +112,20 @@ func TestDeserializePokemon(t *testing.T) {
 			}
 
 			inputStr := string(expectedPokeJSON)
-			deserialErr := DeserializePokemon(inputStr, tt.actualPoke)
+			deserialErr := pokescraper.DeserializePokemon(inputStr, tt.actualPoke)
 			if (deserialErr != nil) != tt.wantErr {
 				t.Fatalf("error during deserialization: %v\nactual Poke (after expected change): %v", deserialErr, *tt.actualPoke)
 			}
 
-			emptyPoke := Pokemon{}
+			emptyPoke := pokescraper.Pokemon{}
 			if deserialErr != nil && tt.wantErr && inputStr == "" &&
-				(IsEmptyPokemon(emptyPoke, *tt.inputPoke) || IsPartialPokemon(*tt.inputPoke)) {
+				(pokescraper.IsEmptyPokemon(emptyPoke, *tt.inputPoke) || pokescraper.IsPartialPokemon(*tt.inputPoke)) {
 				t.Log("intentional deserialErr has occurred.")
 				return
 			}
 
 			if !reflect.DeepEqual(*tt.inputPoke, *tt.actualPoke) {
-				t.Fatalf("actual Pokemon does not match expected.\nactual Pokemon: %v\nexpected Pokemon: %v", *tt.inputPoke, *tt.actualPoke)
+				t.Fatalf("actual pokescraper.Pokemon does not match expected.\nactual Pokemon: %v\nexpected Pokemon: %v", *tt.inputPoke, *tt.actualPoke)
 			}
 
 			actualPokeJSON, reserialErr := json.MarshalIndent(*tt.actualPoke, "", "    ")

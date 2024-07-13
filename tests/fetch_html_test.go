@@ -1,4 +1,4 @@
-package pokescraper
+package tests
 
 import (
 	"bytes"
@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/jack-gaskins/pokemonscraper/pokescraper"
 )
 
 func TestFetchHTML(t *testing.T) {
@@ -45,7 +47,7 @@ func TestFetchHTML(t *testing.T) {
 
 		expectedStr := builder.String()
 
-		actualStr, fetchErr := FetchHTML(mockServer.URL)
+		actualStr, fetchErr := pokescraper.FetchHTML(mockServer.URL)
 		if fetchErr != nil {
 			t.Fatalf("expected no error, got error: %v", fetchErr)
 		}
@@ -54,6 +56,7 @@ func TestFetchHTML(t *testing.T) {
 			t.Fatalf("actual string does not match expected string.\nactual string: %v\nexpected string: %v", actualStr, expectedStr)
 		}
 
+		t.Logf("HTML string Retrieved:\n%v", actualStr)
 	})
 
 }
