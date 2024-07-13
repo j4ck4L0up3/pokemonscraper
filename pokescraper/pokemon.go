@@ -14,12 +14,12 @@ type Pokemon struct {
 func ValidatePokemon(poke Pokemon) error {
 	emptyPoke := Pokemon{}
 	if IsEmptyPokemon(emptyPoke, poke) {
-		err := errors.New("Empty Pokemon struct given")
+		err := errors.New("empty Pokemon struct given")
 		return err
 	}
 
 	if IsPartialPokemon(poke) {
-		err := errors.New("Partial Pokemon struct given")
+		err := errors.New("partial Pokemon struct given")
 		return err
 	}
 

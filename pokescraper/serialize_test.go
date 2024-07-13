@@ -42,24 +42,24 @@ func TestSerializePokemon(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, serializeErr := SerializePokemon(*tt.expectedPoke)
 			if (serializeErr != nil) != tt.wantErr {
-				t.Fatalf("Error during serialization: %v\n", serializeErr)
+				t.Fatalf("error during serialization: %v", serializeErr)
 			}
 
 			emptyPoke := Pokemon{}
 			if serializeErr != nil && tt.wantErr && got == "" &&
 				(IsEmptyPokemon(emptyPoke, *tt.expectedPoke) ||
 					IsPartialPokemon(*tt.expectedPoke)) {
-				t.Log("Intentional serializeErr occurred\n")
+				t.Log("intentional serializeErr occurred")
 				return
 			}
 
 			jsonErr := json.Unmarshal([]byte(got), tt.actualPoke)
 			if jsonErr != nil {
-				t.Fatalf("Error Unmarshaling serialized data.\n Actual Poke: %v\n Expected: %v\n Error: %v\n", *tt.actualPoke, *tt.expectedPoke, jsonErr)
+				t.Fatalf("error Unmarshaling serialized data.\n actual Poke: %v\n expected: %v\n error: %v", *tt.actualPoke, *tt.expectedPoke, jsonErr)
 			}
 
 			if !reflect.DeepEqual(*tt.expectedPoke, *tt.actualPoke) {
-				t.Fatalf("Actual Pokemon does not match expected.\nActual Pokemon: %v\nExpected Pokemon: %v\n", *tt.expectedPoke, *tt.actualPoke)
+				t.Fatalf("actual Pokemon does not match expected.\nactual Pokemon: %v\nexpected Pokemon: %v", *tt.expectedPoke, *tt.actualPoke)
 			}
 		})
 	}
@@ -74,14 +74,14 @@ func TestDeserializePokemon(t *testing.T) {
 		wantErr    bool
 	}{
 		{
-			name:       "Pikachu test",
+			name:       "pikachu test",
 			inputStr:   new(string),
 			inputPoke:  &Pokemon{ID: "025", Name: "pikachu", Type: []string{"electic"}},
 			actualPoke: &Pokemon{},
 			wantErr:    false,
 		},
 		{
-			name:       "Charizard test",
+			name:       "charizard test",
 			inputStr:   new(string),
 			inputPoke:  &Pokemon{ID: "006", Name: "charizard", Type: []string{"fire", "flying"}},
 			actualPoke: &Pokemon{},
@@ -101,40 +101,39 @@ func TestDeserializePokemon(t *testing.T) {
 			actualPoke: &Pokemon{},
 			wantErr:    true,
 		},
-		// TODO: add test case for extra struct field(s)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			expectedPokeJSON, serialErr := json.MarshalIndent(*tt.inputPoke, "", "    ")
 			if serialErr != nil {
-				t.Fatalf("Error Marshaling deserialized data.\nInput Poke: %v\nError: %v\n", *tt.inputPoke, serialErr)
+				t.Fatalf("error Marshaling deserialized data.\ninput Poke: %v\nerror: %v", *tt.inputPoke, serialErr)
 			}
 
 			inputStr := string(expectedPokeJSON)
 			deserialErr := DeserializePokemon(inputStr, tt.actualPoke)
 			if (deserialErr != nil) != tt.wantErr {
-				t.Fatalf("Error during deserialization: %v\nActual Poke (after expected change): %v\n", deserialErr, *tt.actualPoke)
+				t.Fatalf("error during deserialization: %v\nactual Poke (after expected change): %v", deserialErr, *tt.actualPoke)
 			}
 
 			emptyPoke := Pokemon{}
 			if deserialErr != nil && tt.wantErr && inputStr == "" &&
 				(IsEmptyPokemon(emptyPoke, *tt.inputPoke) || IsPartialPokemon(*tt.inputPoke)) {
-				t.Log("Intentional deserialErr has occurred.\n")
+				t.Log("intentional deserialErr has occurred.")
 				return
 			}
 
 			if !reflect.DeepEqual(*tt.inputPoke, *tt.actualPoke) {
-				t.Fatalf("Actual Pokemon does not match expected.\nActual Pokemon: %v\nExpected Pokemon: %v\n", *tt.inputPoke, *tt.actualPoke)
+				t.Fatalf("actual Pokemon does not match expected.\nactual Pokemon: %v\nexpected Pokemon: %v", *tt.inputPoke, *tt.actualPoke)
 			}
 
 			actualPokeJSON, reserialErr := json.MarshalIndent(*tt.actualPoke, "", "    ")
 			if reserialErr != nil {
-				t.Fatalf("Error Marshaling deserialized data.\nActual Poke: %v\nError: %v\n", *tt.actualPoke, reserialErr)
+				t.Fatalf("error Marshaling deserialized data.\nactual Poke: %v\nerror: %v", *tt.actualPoke, reserialErr)
 			}
 
 			outputStr := string(actualPokeJSON)
 			if outputStr != inputStr {
-				t.Fatalf("Final string does not match original.\nInput String: %v\nOutput String: %v\n", inputStr, outputStr)
+				t.Fatalf("final string does not match original.\ninput String: %v\noutput String: %v", inputStr, outputStr)
 			}
 		})
 	}

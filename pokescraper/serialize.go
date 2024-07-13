@@ -24,7 +24,7 @@ func SerializePokemon(poke Pokemon) (string, error) {
 func DeserializePokemon(pokeJSON string, pokePoint *Pokemon) error {
 	err := json.Unmarshal([]byte(pokeJSON), pokePoint)
 	if err != nil {
-		return fmt.Errorf("Error Unmarshaling deserialized data: %v\n", err)
+		return fmt.Errorf("error unmarshaling deserialized data: %v", err)
 	}
 
 	invalidErr := ValidatePokemon(*pokePoint)
