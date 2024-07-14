@@ -5,9 +5,10 @@ import (
 )
 
 type Pokemon struct {
-	ID   string   `json:"id"`
-	Name string   `json:"name"`
-	Type []string `json:"type"`
+	ID     string   `json:"id"`
+	Name   string   `json:"name"`
+	Type   []string `json:"type"`
+	Region string   `json:"region"`
 }
 
 // returns false for invalid Pokemon structs, true for valid ones
@@ -30,10 +31,11 @@ func ValidatePokemon(poke Pokemon) error {
 func IsEmptyPokemon(empty, poke Pokemon) bool {
 	return empty.ID == poke.ID &&
 		empty.Name == poke.Name &&
-		len(empty.Type) == len(poke.Type)
+		len(empty.Type) == len(poke.Type) &&
+		empty.Region == poke.Region
 }
 
 // returns true if Pokemon struct is partial, false if not
 func IsPartialPokemon(poke Pokemon) bool {
-	return poke.ID == "" || poke.Name == "" || len(poke.Type) == 0
+	return poke.ID == "" || poke.Name == "" || len(poke.Type) == 0 || poke.Region == ""
 }
