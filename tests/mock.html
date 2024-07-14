@@ -5,14 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mock Document</title>
 </head>
-<body>
-    <h1>Hello, World</h1>
-    <table>
-        <th>Table Head</th>
-        <tr>table row</tr>
-        <tr>table row</tr>
-        <tr>table row</tr>
-        <tr>table row</tr>
-    </table>
-</body>
+    <body>
+        <h1>Hello, World</h1>
+        <div id="wrapper">
+            <div id="content">
+                <main>
+                    <div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <form>
+                                            <select name="SelectUrl">
+                                                <option value="/pokedex-sv/name1/">name1</option>
+                                                <option value="/pokedex-sv/name2/">name2</option>
+                                                <option value="/pokedex-sv/name3/">name3</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <form>
+                                            <select name="SelectUrl">
+                                                <option value="/pokedex-sv/name4/">name4</option>
+                                                <option value="/pokedex-sv/name5/">name5</option>
+                                                <option value="/pokedex-sv/name6/">name6</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <form>
+                                            <select name="SelectUrl">
+                                                <option value="/pokedex-sv/name7/">name7</option>
+                                                <option value="/pokedex-sv/name8/">name8</option>
+                                                <option value="/pokedex-sv/name9/">name9</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </body>
 </html>
+
+<!--Actual select-->
+<!--
+<select name="SelectURL" onchange="document.location.href=document.nav.SelectURL.options[document.nav.SelectURL.selectedIndex].value" style="color:#383838; font-size: 8pt; background:#CEBC77" size="1">
+<option value="#">Kanto: 001 - 151</option>
+<option value="/pokedex-sv/bulbasaur/">001 Bulbasaur</option>
+<option value="/pokedex-sv/ivysaur/">002 Ivysaur</option>
+...
+</select>
+-->

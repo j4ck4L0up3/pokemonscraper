@@ -122,6 +122,53 @@ func TestFetchHTML(t *testing.T) {
 }
 
 func TestParseHTML(t *testing.T) {
+	// Test case: mock.html converted into string by FetchHTML
+	t.Run("mock.html as string", func(t *testing.T) {
+		mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			htmlFile, readErr := os.ReadFile("mock.html")
+			if readErr != nil {
+				t.Fatalf("unable to read mock html file for mock server:\n%v", readErr)
+			}
+
+			w.Header().Set("Content-Type", "text/html")
+
+			w.WriteHeader(http.StatusOK)
+			_, writeErr := w.Write(htmlFile)
+			if writeErr != nil {
+				t.Fatalf("failed to write mock html file to mock server.\nwrite error: %v", writeErr)
+			}
+		}))
+
+		defer mockServer.Close()
+
+		builder := new(strings.Builder)
+		mockData, readErr := os.ReadFile("mock.html")
+		if readErr != nil {
+			t.Fatalf("error reading the mock html file for expected data:\n%v", readErr)
+		}
+
+		mockHtml := bytes.NewReader(mockData)
+		_, ioErr := io.Copy(builder, mockHtml)
+		if ioErr != nil {
+			t.Fatalf("error copying byte array to strings.Builder object:\n%v", ioErr)
+		}
+
+		mockStr := builder.String()
+		mockNode, parseErr := pokescraper.ParseHTML(mockStr)
+		if parseErr != nil {
+			t.Fatalf("expected no error, got error: %v", parseErr)
+		}
+
+		if mockNode.Type == 0 {
+			t.Fatal("no html.Node detected")
+		}
+
+		if mockNode == nil {
+			t.Fatal("expected *html.Node, got nil")
+		}
+
+	})
+
 	// Test case: Valid html content string
 	t.Run("valid html content string", func(t *testing.T) {
 		htmlContent := "<html><body><h1>Hello, World!</h1></body></html>"
@@ -148,5 +195,39 @@ func TestParseHTML(t *testing.T) {
 		if emptyNode != nil {
 			t.Fatalf("expected nil, got:\n%v", emptyNode)
 		}
+	})
+}
+
+func TestTraverseDOM(t *testing.T) {
+	// Test case: mock.html with similar structure to actual site
+	t.Run("mock.html with similar structure to actual site", func(t *testing.T) {
+		builder := new(strings.Builder)
+		mockData, readErr := os.ReadFile("mock.html")
+		if readErr != nil {
+			t.Fatalf("error reading the mock html file for expected data:\n%v", readErr)
+		}
+
+		mockHtml := bytes.NewReader(mockData)
+		_, ioErr := io.Copy(builder, mockHtml)
+		if ioErr != nil {
+			t.Fatalf("error copying byte array to strings.Builder object:\n%v", ioErr)
+		}
+
+		mockStr := builder.String()
+		mockNode, parseErr := pokescraper.ParseHTML(mockStr)
+		if parseErr != nil {
+			t.Fatalf("expected no error, got error: %v", parseErr)
+		}
+
+		var values []string
+		elem := "option"
+		attrKey := "value"
+		pokescraper.TraverseDOM(mockNode, elem, attrKey, &values)
+
+		if len(values) == 0 {
+			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+		}
+
+		t.Logf("Values retrieved: %v", values)
 	})
 }

@@ -45,3 +45,20 @@ func ParseHTML(htmlContent string) (*html.Node, error) {
 
 	return document, nil
 }
+
+// traverses through the html to retrieve the URL values for each pokemon page
+func TraverseDOM(node *html.Node, elem string, attrKey string, urlValues *[]string) {
+	if node.Type == html.ElementNode && node.Data == elem {
+		if len(node.Attr) != 0 {
+			for _, attr := range node.Attr {
+				if attr.Key == attrKey {
+					*urlValues = append(*urlValues, attr.Val)
+				}
+			}
+		}
+	}
+
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		TraverseDOM(child, elem, attrKey, urlValues)
+	}
+}
