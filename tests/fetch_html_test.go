@@ -120,3 +120,33 @@ func TestFetchHTML(t *testing.T) {
 	})
 
 }
+
+func TestParseHTML(t *testing.T) {
+	// Test case: Valid html content string
+	t.Run("valid html content string", func(t *testing.T) {
+		htmlContent := "<html><body><h1>Hello, World!</h1></body></html>"
+		validNode, err := pokescraper.ParseHTML(htmlContent)
+		if err != nil {
+			t.Fatalf("expected no error, got error:\n%v", err)
+		}
+
+		if validNode == nil {
+			t.Fatal("expected html.Node value, got nil")
+		}
+
+		t.Logf("HTML Node pointer NodeType: %v", validNode.Type)
+	})
+
+	// Test case: Empty string
+	t.Run("empty string", func(t *testing.T) {
+		emptyStr := ""
+		emptyNode, err := pokescraper.ParseHTML(emptyStr)
+		if err == nil {
+			t.Fatalf("expected error, got nil\nReturned NodeType: %v", emptyNode.Type)
+		}
+
+		if emptyNode != nil {
+			t.Fatalf("expected nil, got:\n%v", emptyNode)
+		}
+	})
+}

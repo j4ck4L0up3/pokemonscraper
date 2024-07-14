@@ -1,12 +1,16 @@
 package pokescraper
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
+// returns a string of the given page's html response
 func FetchHTML(url string) (string, error) {
 	resp, reqErr := http.Get(url)
 	if reqErr != nil {
@@ -26,4 +30,18 @@ func FetchHTML(url string) (string, error) {
 	}
 
 	return htmlBuilder.String(), nil
+}
+
+// returns pointer to html Node struct of passed html content
+func ParseHTML(htmlContent string) (*html.Node, error) {
+	if htmlContent == "" || htmlContent == " " {
+		return nil, errors.New("empty string passed")
+	}
+
+	document, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse HTML from passed string:\n%v", err)
+	}
+
+	return document, nil
 }

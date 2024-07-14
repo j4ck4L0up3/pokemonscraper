@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+//lint:ignore U1000 main function in test file
 func main() {
 	testMap := map[string]func(t *testing.T){
 		"TestFetchHTML":          TestFetchHTML,
