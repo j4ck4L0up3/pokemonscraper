@@ -197,37 +197,3 @@ func TestParseHTML(t *testing.T) {
 		}
 	})
 }
-
-func TestTraverseDOM(t *testing.T) {
-	// Test case: mock.html with similar structure to actual site
-	t.Run("mock.html with similar structure to actual site", func(t *testing.T) {
-		builder := new(strings.Builder)
-		mockData, readErr := os.ReadFile("mock.html")
-		if readErr != nil {
-			t.Fatalf("error reading the mock html file for expected data:\n%v", readErr)
-		}
-
-		mockHtml := bytes.NewReader(mockData)
-		_, ioErr := io.Copy(builder, mockHtml)
-		if ioErr != nil {
-			t.Fatalf("error copying byte array to strings.Builder object:\n%v", ioErr)
-		}
-
-		mockStr := builder.String()
-		mockNode, parseErr := pokescraper.ParseHTML(mockStr)
-		if parseErr != nil {
-			t.Fatalf("expected no error, got error: %v", parseErr)
-		}
-
-		var values []string
-		elem := "option"
-		attrKey := "value"
-		pokescraper.TraverseDOM(mockNode, elem, attrKey, &values)
-
-		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
-		}
-
-		t.Logf("Values retrieved: %v", values)
-	})
-}

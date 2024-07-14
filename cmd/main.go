@@ -32,4 +32,14 @@ func main() {
 
 	fmt.Println(charizard)
 	fmt.Println(reflect.TypeOf(charizard))
+
+	// TODO: first retieve all the page urls from {elem: "option", attrKey: "value"}
+	// do this in batches of 151,100, 135, 107, 156, 72, 88, 96, 120
+	// for Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola, Galar/Hisui, Paldea, respectively
+
+	// TODO: to get id, name
+
+	// TODO: to get types, search {elem: <img>, attrKey: alt}, then filter pattern \b-type (or something)
+	// use TraverseDOMAttr
+
 }
