@@ -4,13 +4,25 @@ import (
 	"golang.org/x/net/html"
 )
 
+// returns true if element is already in the slice, false if not
+func isInSlice(slice []string, element string) bool {
+	seen := make(map[string]struct{})
+	for _, value := range slice {
+		seen[value] = struct{}{}
+	}
+	_, found := seen[element]
+	return found
+}
+
 // fills array with all attribute values based on key for html.Node
 func TraverseDOMAttr(node *html.Node, elem string, attrKey string, values *[]string) {
 	if node.Type == html.ElementNode && node.Data == elem {
 		if len(node.Attr) != 0 {
 			for _, attr := range node.Attr {
 				if attr.Key == attrKey {
-					*values = append(*values, attr.Val)
+					if !isInSlice(*values, attr.Val) {
+						*values = append(*values, attr.Val)
+					}
 				}
 			}
 		}
@@ -22,7 +34,7 @@ func TraverseDOMAttr(node *html.Node, elem string, attrKey string, values *[]str
 }
 
 // fills array with batch of attribute values based on key for html.Node
-func TraverseDOMAttrBatch(node *html.Node, elem string, attrKey string, values *[]string, batches ...int) {
+func TraverseDOMAttrBatch(node *html.Node, elem string, attrKey string, values *[]string, batches ...int) *html.Node {
 	batch := 1
 	if len(batches) > 0 && batches[0] >= 1 {
 		batch = batches[0]
@@ -33,10 +45,11 @@ func TraverseDOMAttrBatch(node *html.Node, elem string, attrKey string, values *
 			for _, attr := range node.Attr {
 				if attr.Key == attrKey {
 					if len(*values) == batch {
-						return
+						return node
 					}
-
-					*values = append(*values, attr.Val)
+					if !isInSlice(*values, attr.Val) {
+						*values = append(*values, attr.Val)
+					}
 				}
 			}
 		}
@@ -45,6 +58,7 @@ func TraverseDOMAttrBatch(node *html.Node, elem string, attrKey string, values *
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		TraverseDOMAttrBatch(child, elem, attrKey, values, batch)
 	}
+	return node
 }
 
 // fills array with all text from html.Nodes traversed based on element and attribute key and value
@@ -55,7 +69,9 @@ func TraverseDOMText(node *html.Node, elem string, attrKey string, attrVal strin
 				if attr.Key == attrKey && attr.Val == attrVal {
 					for c := node.FirstChild; c != nil; c = c.NextSibling {
 						if c.Type == html.TextNode {
-							*elemText = append(*elemText, c.Data)
+							if !isInSlice(*elemText, c.Data) {
+								*elemText = append(*elemText, c.Data)
+							}
 						}
 					}
 				}
