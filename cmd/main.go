@@ -2,16 +2,32 @@ package main
 
 import (
 	"fmt"
-	// "os"
 	"github.com/j4ck4L0up3/pokemonscraper/pokescraper"
+	// "os"
 )
 
 func main() {
 	url := "https://serebii.net/pokedex-sv/"
-	htmlStr := pokescraper.ProcessHTML(url)
-	fmt.Printf("Reduced HTML String:\n%v", htmlStr)
+
+	htmlRawStr, fetchErr := pokescraper.FetchHTML(url)
+	if fetchErr != nil {
+		fmt.Printf("FetchHTML Error:\n%v", fetchErr)
+	}
+
+	numRegions := 9
+
+	for htmlStr := range pokescraper.BatchHTMLString(htmlRawStr, numRegions) {
+		fmt.Printf("Reduced HTML String:\n%v", htmlStr)
+	}
+
+	// parse the html from the strings
+
+	// get the attribute values from the string
+
+	// get the text nodes from the elements that have text
+
 	// TODO: parse html and create parentNode pointer
-	// parentNode, parseErr := pokescraper.ParseHTML(htmlString)
+	// parentNode, parseErr := pokescraper.ParseHTML(htmlRawStr)
 	// if parseErr != nil {
 	// 	fmt.Printf(
 	// 		"error parsing string fetched from https://serebii.net/pokedex-sv/: %v",
@@ -41,12 +57,12 @@ func main() {
 	// }
 	//
 	// defer file.Close()
-	//
-	// _, writeErr := file.WriteString(htmlStr)
+
+	// _, writeErr := file.WriteString(htmlRawStr)
 	// if writeErr != nil {
 	// 	fmt.Printf("error writing to file {%v}: %v", filename, writeErr)
 	// }
-
+	//
 	// for _, attrVal := range pageUrls {
 	// 	_, osErr := file.WriteString(attrVal + "\n")
 	// 	if osErr != nil {

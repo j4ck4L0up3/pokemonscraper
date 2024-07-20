@@ -1,7 +1,7 @@
 package pokescraper
 
 import (
-	"fmt"
+	// "fmt"
 	"regexp"
 )
 
@@ -12,21 +12,29 @@ func reduceHTMLString(expr string, htmlStr string) [][]string {
 	return match
 }
 
-func ProcessHTML(url string) [][]string {
-	// get raw html string
-	htmlRawString, fetchErr := FetchHTML(url)
-	if fetchErr != nil {
-		fmt.Printf("error fetching from {%v}: %v", url, fetchErr)
-	}
+// yield html string containing one region's pokemon html
+func BatchHTMLString(htmlRawStr string, numRegions int) <-chan string {
+	batch := make(chan string)
+
 	// reduce the raw string with regexp
-	expr := `(?s)<main>(.*?)<\/main>`
-	reducedStr := reduceHTMLString(expr, htmlRawString)
-	// parse the html from the new string
+	exprMain := `(?s)<main>(.*?)<\/main>`
+	reducedStrMain := reduceHTMLString(exprMain, htmlRawStr)
 
-	// get the attribute values from the string
+	// reduce <main> string into matrix of <table> elements
+	exprTable := `(?s)<table (.*?)>(.*?)</table>`
+	reducedStrTable := reduceHTMLString(exprTable, reducedStrMain[0][0])
 
-	// get the text nodes from the elements that have text
+	// reduce to matrix of <select> elements
+	exprSelect := `(?s)<SELECT (.*?)>(.*?)</SELECT>`
+	reducedStrSelect := reduceHTMLString(exprSelect, reducedStrTable[1][0])
 
-	// return processed text
-	return reducedStr
+	go func() {
+		defer close(batch)
+		for i := 0; i < numRegions; i++ {
+			batch <- reducedStrSelect[i][0]
+		}
+	}()
+
+	// return processed string batch
+	return batch
 }
