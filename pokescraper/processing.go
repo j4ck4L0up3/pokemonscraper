@@ -62,8 +62,8 @@ func parseHTMLText(htmlStr string) []string {
 	return pokeIdNames
 }
 
-// pass url and numRegions to get any dexes from https://serebii.net
-func ProcessPokemonMatrix(url string, numRegions int) [][]string {
+// return a matrix of scraper pokemon IDs and names per region
+func processPokemonMatrix(url string, numRegions int) [][]string {
 	// convert page into string
 	htmlRawStr, fetchErr := FetchHTML(url)
 	if fetchErr != nil {
@@ -91,4 +91,26 @@ func ProcessPokemonMatrix(url string, numRegions int) [][]string {
 	}
 
 	return regionPokeIdNames
+}
+
+// remove and return the first element in a list of strings
+func popFirst(strList []string) (string, []string) {
+	if len(strList) > 0 {
+		firstElem := strList[0]
+		strList := strList[1:]
+		return firstElem, strList
+	}
+	return "", strList
+}
+
+// return map of regions and their pokemon IDs & names
+func ProcessPokemonMap(url string, numRegions int) map[string][]string {
+	pokemonMap := make(map[string][]string)
+	pokemonMatrix := processPokemonMatrix(url, numRegions)
+	for _, strList := range pokemonMatrix {
+		region, pokeList := popFirst(strList)
+		pokemonMap[region] = pokeList
+	}
+
+	return pokemonMap
 }
