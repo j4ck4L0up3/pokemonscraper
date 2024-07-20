@@ -3,40 +3,36 @@ package main
 import (
 	"fmt"
 	"github.com/j4ck4L0up3/pokemonscraper/pokescraper"
-	// "os"
+	"os"
 )
 
 func main() {
 	url := "https://serebii.net/pokedex-sv/"
-	numRegions := 9
-	pokemonMap := pokescraper.ProcessPokemonMap(url, numRegions)
-	fmt.Printf("Pokemon Matrix:\n%v\n", pokemonMap)
+	// numRegions := 9
+	// pokemonMap := pokescraper.ProcessPokemonMap(url, numRegions)
+	// fmt.Printf("Pokemon Matrix:\n%v\n", pokemonMap)
+	typeUrls := pokescraper.ParseTypePageUrls(url)
 
-	// TODO: retieve all the page urls from {elem: "option", attrKey: "value"}
-	// do this in batches of 151,100, 135, 107, 156, 72, 88, 96, 120
-	// for Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola, Galar/Hisui, Paldea, respectively
-	// store in map
+	filename := "playgroud.txt"
+	file, osErr := os.Create(filename)
+	if osErr != nil {
+		fmt.Printf("error creating or opening file {%v}: %v", filename, osErr)
+		return
+	}
 
-	// filename := "playgroud.txt"
-	// file, osErr := os.Create(filename)
-	// if osErr != nil {
-	// 	fmt.Printf("error creating or opening file {%v}: %v", filename, osErr)
-	// 	return
-	// }
-	//
-	// defer file.Close()
+	defer file.Close()
 
 	// _, writeErr := file.WriteString(htmlRawStr)
 	// if writeErr != nil {
 	// 	fmt.Printf("error writing to file {%v}: %v", filename, writeErr)
 	// }
-	//
-	// for _, attrVal := range pageUrls {
-	// 	_, osErr := file.WriteString(attrVal + "\n")
-	// 	if osErr != nil {
-	// 		fmt.Printf("error writing to file {%v}: %v", filename, osErr)
-	// 	}
-	// }
+
+	for _, attrVal := range typeUrls {
+		_, osErr := file.WriteString(attrVal + "\n")
+		if osErr != nil {
+			fmt.Printf("error writing to file {%v}: %v", filename, osErr)
+		}
+	}
 
 	// TODO: make a processing file to process and parse the returned strings
 

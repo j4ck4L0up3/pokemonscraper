@@ -65,6 +65,29 @@ func GetDOMAttrValsBatch(
 	return node
 }
 
+// fills a list with all parent nodes of the matching passed node
+func GetDOMParentNode(
+	node *html.Node,
+	elem string,
+	attrKey string,
+	attrVal string,
+	nodes *[]*html.Node,
+) {
+	if node.Type == html.ElementNode && node.Data == elem {
+		if len(node.Attr) != 0 {
+			for _, attr := range node.Attr {
+				if attr.Key == attrKey && attr.Val == attrVal {
+					*nodes = append(*nodes, node.Parent)
+				}
+			}
+		}
+	}
+
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		GetDOMParentNode(child, elem, attrKey, attrVal, nodes)
+	}
+}
+
 // fills array with all text from html.Nodes traversed based on element and attribute key and value
 func GetDOMText(
 	node *html.Node,

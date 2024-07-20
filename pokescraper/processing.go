@@ -2,6 +2,7 @@ package pokescraper
 
 import (
 	"fmt"
+	"golang.org/x/net/html"
 	"regexp"
 	"strings"
 )
@@ -14,7 +15,7 @@ func reduceString(expr string, str string) [][]string {
 }
 
 // yield html string containing one region's pokemon html
-func batchHTMLString(htmlRawStr string, numRegions int) <-chan string {
+func batchPokeHtmlString(htmlRawStr string, numRegions int) <-chan string {
 	batch := make(chan string)
 
 	// reduce the raw string with regexp
@@ -41,7 +42,7 @@ func batchHTMLString(htmlRawStr string, numRegions int) <-chan string {
 }
 
 // return string of text from html nodes
-func parseHTMLText(htmlStr string) []string {
+func parsePokeHtmlText(htmlStr string) []string {
 	// parse strings into html node pointers
 	node, parseErr := ParseHTML(htmlStr)
 	if parseErr != nil {
@@ -73,14 +74,14 @@ func processPokemonMatrix(url string, numRegions int) [][]string {
 
 	// get html region batches
 	htmlStrBatches := []string{}
-	for htmlStr := range batchHTMLString(htmlRawStr, numRegions) {
+	for htmlStr := range batchPokeHtmlString(htmlRawStr, numRegions) {
 		htmlStrBatches = append(htmlStrBatches, htmlStr)
 	}
 
 	// create matrix of pokemon per region
 	regionPokeIdNames := [][]string{}
 	for _, htmlStr := range htmlStrBatches {
-		pokeIdNames := parseHTMLText(htmlStr)
+		pokeIdNames := parsePokeHtmlText(htmlStr)
 		regionPokeIdNames = append(regionPokeIdNames, pokeIdNames)
 	}
 
@@ -92,6 +93,43 @@ func processPokemonMatrix(url string, numRegions int) [][]string {
 	}
 
 	return regionPokeIdNames
+}
+
+func ParseTypePageUrls(baseUrl string) []string {
+	typeUris := []string{}
+	typeUrls := []string{}
+
+	// get the <a> href attributes
+	htmlRawStr, fetchErr := FetchHTML(baseUrl)
+	if fetchErr != nil {
+		fmt.Printf("FetchHTML Error:\n%v\n", fetchErr)
+	}
+
+	node, parseErr := ParseHTML(htmlRawStr)
+	if parseErr != nil {
+		fmt.Printf("ParseHTML Error:\n%v\n", parseErr)
+	}
+
+	var typeNodes []*html.Node
+	imgElem := "img"
+	classKey := "class"
+	classVal := "typeimg"
+	GetDOMParentNode(node, imgElem, classKey, classVal, &typeNodes)
+
+	aElem := "a"
+	attrKey := "href"
+	for _, parentNode := range typeNodes {
+		GetDOMAttrVals(parentNode, aElem, attrKey, &typeUris)
+	}
+
+	for _, uri := range typeUris {
+		expr := `[^/]+$`
+		match := reduceString(expr, uri)
+		url := baseUrl + match[0][0]
+		typeUrls = append(typeUrls, url)
+	}
+
+	return typeUrls
 }
 
 // remove and return the first element in a list of strings
