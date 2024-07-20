@@ -8,12 +8,12 @@ import (
 //lint:ignore U1000 main function in test file
 func main() {
 	testMap := map[string]func(t *testing.T){
-		"TestFetchHTML":            TestFetchHTML,
-		"TestSerializePokemon":     TestSerializePokemon,
-		"TestDeserializePokemon":   TestDeserializePokemon,
-		"TestTraverseDOMAttr":      TestTraverseDOMAttr,
-		"TestTraverseDOMAttrBatch": TestTraverseDOMAttrBatch,
-		"TestTraverseDOMText":      TestTraverseDOMText,
+		"TestFetchHTML":           TestFetchHTML,
+		"TestSerializePokemon":    TestSerializePokemon,
+		"TestDeserializePokemon":  TestDeserializePokemon,
+		"TestGetDOMAttrVals":      TestGetDOMAttrVals,
+		"TestGetDOMAttrValsBatch": TestGetDOMAttrValsBatch,
+		"TestGetDOMText":          TestGetDOMText,
 	}
 
 	var tests []testing.InternalTest

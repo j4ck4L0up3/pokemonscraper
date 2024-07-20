@@ -10,26 +10,31 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jack-gaskins/pokemonscraper/pokescraper"
+	"github.com/j4ck4L0up3/pokemonscraper/pokescraper"
 )
 
 func TestFetchHTML(t *testing.T) {
 	// Test case: Successful fetch with html
 	t.Run("successful fetch with mock HTML", func(t *testing.T) {
-		mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			htmlFile, readErr := os.ReadFile("mock.html")
-			if readErr != nil {
-				t.Fatalf("unable to read mock html file for mock server:\n%v", readErr)
-			}
+		mockServer := httptest.NewServer(
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				htmlFile, readErr := os.ReadFile("mock.html")
+				if readErr != nil {
+					t.Fatalf("unable to read mock html file for mock server:\n%v", readErr)
+				}
 
-			w.Header().Set("Content-Type", "text/html")
+				w.Header().Set("Content-Type", "text/html")
 
-			w.WriteHeader(http.StatusOK)
-			_, writeErr := w.Write(htmlFile)
-			if writeErr != nil {
-				t.Fatalf("failed to write mock html file to mock server.\nwrite error: %v", writeErr)
-			}
-		}))
+				w.WriteHeader(http.StatusOK)
+				_, writeErr := w.Write(htmlFile)
+				if writeErr != nil {
+					t.Fatalf(
+						"failed to write mock html file to mock server.\nwrite error: %v",
+						writeErr,
+					)
+				}
+			}),
+		)
 
 		defer mockServer.Close()
 
@@ -53,7 +58,11 @@ func TestFetchHTML(t *testing.T) {
 		}
 
 		if !reflect.DeepEqual(expectedStr, actualStr) {
-			t.Fatalf("actual string does not match expected string.\nactual string: %v\nexpected string: %v", actualStr, expectedStr)
+			t.Fatalf(
+				"actual string does not match expected string.\nactual string: %v\nexpected string: %v",
+				actualStr,
+				expectedStr,
+			)
 		}
 
 		t.Logf("HTML string retrieved:\n%v", actualStr)
@@ -61,13 +70,15 @@ func TestFetchHTML(t *testing.T) {
 
 	// Test case: Successful fetch with bytes
 	t.Run("succcesful fetch with bytes", func(t *testing.T) {
-		mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, writeErr := w.Write([]byte("Hello, World!"))
-			if writeErr != nil {
-				t.Fatalf("failed to write bytes to mock server:\n%v", writeErr)
-			}
-		}))
+		mockServer := httptest.NewServer(
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				_, writeErr := w.Write([]byte("Hello, World!"))
+				if writeErr != nil {
+					t.Fatalf("failed to write bytes to mock server:\n%v", writeErr)
+				}
+			}),
+		)
 
 		defer mockServer.Close()
 
@@ -78,7 +89,11 @@ func TestFetchHTML(t *testing.T) {
 		}
 
 		if actualStr != expectedStr {
-			t.Fatalf("actual string does not match expected string.\nactual string: %v\nexpected string: %v", actualStr, expectedStr)
+			t.Fatalf(
+				"actual string does not match expected string.\nactual string: %v\nexpected string: %v",
+				actualStr,
+				expectedStr,
+			)
 		}
 
 		t.Logf("Actual string retrieved:\n%v", actualStr)
@@ -86,9 +101,11 @@ func TestFetchHTML(t *testing.T) {
 
 	// Test case: HTTP error
 	t.Run("failed fetch with HTTP error", func(t *testing.T) {
-		mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusInternalServerError)
-		}))
+		mockServer := httptest.NewServer(
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusInternalServerError)
+			}),
+		)
 
 		defer mockServer.Close()
 
@@ -124,20 +141,25 @@ func TestFetchHTML(t *testing.T) {
 func TestParseHTML(t *testing.T) {
 	// Test case: mock.html converted into string by FetchHTML
 	t.Run("mock.html as string", func(t *testing.T) {
-		mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			htmlFile, readErr := os.ReadFile("mock.html")
-			if readErr != nil {
-				t.Fatalf("unable to read mock html file for mock server:\n%v", readErr)
-			}
+		mockServer := httptest.NewServer(
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				htmlFile, readErr := os.ReadFile("mock.html")
+				if readErr != nil {
+					t.Fatalf("unable to read mock html file for mock server:\n%v", readErr)
+				}
 
-			w.Header().Set("Content-Type", "text/html")
+				w.Header().Set("Content-Type", "text/html")
 
-			w.WriteHeader(http.StatusOK)
-			_, writeErr := w.Write(htmlFile)
-			if writeErr != nil {
-				t.Fatalf("failed to write mock html file to mock server.\nwrite error: %v", writeErr)
-			}
-		}))
+				w.WriteHeader(http.StatusOK)
+				_, writeErr := w.Write(htmlFile)
+				if writeErr != nil {
+					t.Fatalf(
+						"failed to write mock html file to mock server.\nwrite error: %v",
+						writeErr,
+					)
+				}
+			}),
+		)
 
 		defer mockServer.Close()
 

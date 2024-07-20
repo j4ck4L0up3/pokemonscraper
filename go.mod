@@ -1,4 +1,4 @@
-module github.com/jack-gaskins/pokemonscraper
+module github.com/j4ck4L0up3/pokemonscraper
 
 go 1.22.5
 

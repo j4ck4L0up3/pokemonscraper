@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jack-gaskins/pokemonscraper/pokescraper"
+	"github.com/j4ck4L0up3/pokemonscraper/pokescraper"
 )
 
-func TestTraverseDOMAttr(t *testing.T) {
+func TestGetDOMAttrVals(t *testing.T) {
 	// Test case: mock.html with similar structure to actual site
 	t.Run("mock.html with similar structure to actual site", func(t *testing.T) {
 		builder := new(strings.Builder)
@@ -34,17 +34,19 @@ func TestTraverseDOMAttr(t *testing.T) {
 		var values []string
 		elem := "option"
 		attrKey := "value"
-		pokescraper.TraverseDOMAttr(mockNode, elem, attrKey, &values)
+		pokescraper.GetDOMAttrVals(mockNode, elem, attrKey, &values)
 
 		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+			t.Fatal(
+				"error retrieving values from html.Node, expected filled array, got empty array",
+			)
 		}
 
 		t.Logf("Values retrieved: %v", values)
 	})
 }
 
-func TestTraverseDOMAttrBatch(t *testing.T) {
+func TestGetDOMAttrValsBatch(t *testing.T) {
 	// Test case: mock.html with batch
 	t.Run("mock.html with batch", func(t *testing.T) {
 		builder := new(strings.Builder)
@@ -69,14 +71,20 @@ func TestTraverseDOMAttrBatch(t *testing.T) {
 		elem := "option"
 		attrKey := "value"
 		testBatch := 3
-		lastNode := pokescraper.TraverseDOMAttrBatch(mockNode, elem, attrKey, &values, testBatch)
+		lastNode := pokescraper.GetDOMAttrValsBatch(mockNode, elem, attrKey, &values, testBatch)
 
 		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+			t.Fatal(
+				"error retrieving values from html.Node, expected filled array, got empty array",
+			)
 		}
 
 		if len(values) != testBatch {
-			t.Fatalf("error filling array, expected {%v} elements, got {%v}", testBatch, len(values))
+			t.Fatalf(
+				"error filling array, expected {%v} elements, got {%v}",
+				testBatch,
+				len(values),
+			)
 		}
 
 		if lastNode.Type == 0 {
@@ -109,10 +117,12 @@ func TestTraverseDOMAttrBatch(t *testing.T) {
 		var values []string
 		elem := "option"
 		attrKey := "value"
-		lastNode := pokescraper.TraverseDOMAttrBatch(mockNode, elem, attrKey, &values)
+		lastNode := pokescraper.GetDOMAttrValsBatch(mockNode, elem, attrKey, &values)
 
 		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+			t.Fatal(
+				"error retrieving values from html.Node, expected filled array, got empty array",
+			)
 		}
 
 		if len(values) != 1 {
@@ -150,10 +160,12 @@ func TestTraverseDOMAttrBatch(t *testing.T) {
 		elem := "option"
 		attrKey := "value"
 		testBatch := 0
-		lastNode := pokescraper.TraverseDOMAttrBatch(mockNode, elem, attrKey, &values, testBatch)
+		lastNode := pokescraper.GetDOMAttrValsBatch(mockNode, elem, attrKey, &values, testBatch)
 
 		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+			t.Fatal(
+				"error retrieving values from html.Node, expected filled array, got empty array",
+			)
 		}
 
 		if len(values) != 1 {
@@ -191,10 +203,12 @@ func TestTraverseDOMAttrBatch(t *testing.T) {
 		elem := "option"
 		attrKey := "value"
 		testBatch := -1
-		lastNode := pokescraper.TraverseDOMAttrBatch(mockNode, elem, attrKey, &values, testBatch)
+		lastNode := pokescraper.GetDOMAttrValsBatch(mockNode, elem, attrKey, &values, testBatch)
 
 		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+			t.Fatal(
+				"error retrieving values from html.Node, expected filled array, got empty array",
+			)
 		}
 
 		if len(values) != 1 {
@@ -209,7 +223,7 @@ func TestTraverseDOMAttrBatch(t *testing.T) {
 	})
 }
 
-func TestTraverseDOMText(t *testing.T) {
+func TestGetDOMText(t *testing.T) {
 	// Test case: mock.html
 	t.Run("mock.html", func(t *testing.T) {
 		builder := new(strings.Builder)
@@ -239,15 +253,21 @@ func TestTraverseDOMText(t *testing.T) {
 			"/pokedex-sv/name7/", "/pokedex-sv/name8/", "/pokedex-sv/name9/",
 		}
 		for _, attrVal := range attrVals {
-			pokescraper.TraverseDOMText(mockNode, elem, attrKey, attrVal, &values)
+			pokescraper.GetDOMText(mockNode, elem, attrKey, attrVal, &values)
 		}
 
 		if len(values) == 0 {
-			t.Fatal("error retrieving values from html.Node, expected filled array, got empty array")
+			t.Fatal(
+				"error retrieving values from html.Node, expected filled array, got empty array",
+			)
 		}
 
 		if len(values) != len(attrVals) {
-			t.Fatalf("error filling array, expected {%v} elements, got {%v}", len(attrVals), len(values))
+			t.Fatalf(
+				"error filling array, expected {%v} elements, got {%v}",
+				len(attrVals),
+				len(values),
+			)
 		}
 
 		t.Logf("Values retrieved: %v", values)

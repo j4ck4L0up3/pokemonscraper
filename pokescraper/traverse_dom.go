@@ -15,26 +15,30 @@ func isInSlice(slice []string, element string) bool {
 }
 
 // fills array with all attribute values based on key for html.Node
-func TraverseDOMAttr(node *html.Node, elem string, attrKey string, values *[]string) {
+func GetDOMAttrVals(node *html.Node, elem string, attrKey string, values *[]string) {
 	if node.Type == html.ElementNode && node.Data == elem {
 		if len(node.Attr) != 0 {
 			for _, attr := range node.Attr {
 				if attr.Key == attrKey {
-					if !isInSlice(*values, attr.Val) {
-						*values = append(*values, attr.Val)
-					}
+					*values = append(*values, attr.Val)
 				}
 			}
 		}
 	}
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		TraverseDOMAttr(child, elem, attrKey, values)
+		GetDOMAttrVals(child, elem, attrKey, values)
 	}
 }
 
 // fills array with batch of attribute values based on key for html.Node
-func TraverseDOMAttrBatch(node *html.Node, elem string, attrKey string, values *[]string, batches ...int) *html.Node {
+func GetDOMAttrValsBatch(
+	node *html.Node,
+	elem string,
+	attrKey string,
+	values *[]string,
+	batches ...int,
+) *html.Node {
 	batch := 1
 	if len(batches) > 0 && batches[0] >= 1 {
 		batch = batches[0]
@@ -56,30 +60,40 @@ func TraverseDOMAttrBatch(node *html.Node, elem string, attrKey string, values *
 	}
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		TraverseDOMAttrBatch(child, elem, attrKey, values, batch)
+		GetDOMAttrValsBatch(child, elem, attrKey, values, batch)
 	}
 	return node
 }
 
 // fills array with all text from html.Nodes traversed based on element and attribute key and value
-func TraverseDOMText(node *html.Node, elem string, attrKey string, attrVal string, elemText *[]string) {
+func GetDOMText(
+	node *html.Node,
+	elem string,
+	attrKey string,
+	attrVal string,
+	elemText *[]string,
+) {
 	if node.Type == html.ElementNode && node.Data == elem {
 		if len(node.Attr) != 0 {
 			for _, attr := range node.Attr {
 				if attr.Key == attrKey && attr.Val == attrVal {
-					for c := node.FirstChild; c != nil; c = c.NextSibling {
-						if c.Type == html.TextNode {
-							if !isInSlice(*elemText, c.Data) {
-								*elemText = append(*elemText, c.Data)
-							}
-						}
-					}
+					getDOMChildText(node, elemText)
+					break
 				}
+				continue
 			}
 		}
 	}
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		TraverseDOMText(child, elem, attrKey, attrVal, elemText)
+		GetDOMText(child, elem, attrKey, attrVal, elemText)
+	}
+}
+
+func getDOMChildText(node *html.Node, elemText *[]string) {
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		if child.Type == html.TextNode {
+			*elemText = append(*elemText, child.Data)
+		}
 	}
 }
