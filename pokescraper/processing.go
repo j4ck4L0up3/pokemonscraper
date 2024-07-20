@@ -3,6 +3,7 @@ package pokescraper
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // returns a string containing only the desired elements
@@ -103,13 +104,24 @@ func popFirst(strList []string) (string, []string) {
 	return "", strList
 }
 
+// split strings in a list of strings, returns list of lists of strings
+func splitStrInList(strList []string) [][]string {
+	stringMatrix := [][]string{}
+	for _, str := range strList {
+		splitList := strings.Split(str, " ")
+		stringMatrix = append(stringMatrix, splitList)
+	}
+	return stringMatrix
+}
+
 // return map of regions and their pokemon IDs & names
-func ProcessPokemonMap(url string, numRegions int) map[string][]string {
-	pokemonMap := make(map[string][]string)
+func ProcessPokemonMap(url string, numRegions int) map[string][][]string {
+	pokemonMap := make(map[string][][]string)
 	pokemonMatrix := processPokemonMatrix(url, numRegions)
 	for _, strList := range pokemonMatrix {
 		region, pokeList := popFirst(strList)
-		pokemonMap[region] = pokeList
+		pokeMatrix := splitStrInList(pokeList)
+		pokemonMap[region] = pokeMatrix
 	}
 
 	return pokemonMap
