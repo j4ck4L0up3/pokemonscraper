@@ -3,36 +3,38 @@ package main
 import (
 	"fmt"
 	"github.com/j4ck4L0up3/pokemonscraper/pokescraper"
-	"os"
+	// "golang.org/x/net/html"
+	// "os"
 )
 
 func main() {
 	url := "https://serebii.net/pokedex-sv/"
-	// numRegions := 9
+	numRegions := 9
 	// pokemonMap := pokescraper.ProcessPokemonMap(url, numRegions)
 	// fmt.Printf("Pokemon Matrix:\n%v\n", pokemonMap)
-	typeUrls := pokescraper.ParseTypePageUrls(url)
-
-	filename := "playgroud.txt"
-	file, osErr := os.Create(filename)
-	if osErr != nil {
-		fmt.Printf("error creating or opening file {%v}: %v", filename, osErr)
-		return
+	pokemonList := pokescraper.SetPokemon(url, numRegions)
+	for _, poke := range pokemonList {
+		fmt.Printf("Pokemon: %v\n", poke)
 	}
-
-	defer file.Close()
-
+	// filename := "playgroud.txt"
+	// file, osErr := os.Create(filename)
+	// if osErr != nil {
+	// 	fmt.Printf("error creating or opening file {%v}: %v", filename, osErr)
+	// 	return
+	// }
+	//
+	// defer file.Close()
 	// _, writeErr := file.WriteString(htmlRawStr)
 	// if writeErr != nil {
 	// 	fmt.Printf("error writing to file {%v}: %v", filename, writeErr)
 	// }
-
-	for _, attrVal := range typeUrls {
-		_, osErr := file.WriteString(attrVal + "\n")
-		if osErr != nil {
-			fmt.Printf("error writing to file {%v}: %v", filename, osErr)
-		}
-	}
+	//
+	// for _, htmlRawStr := range htmlRawStrs {
+	// 	_, osErr := file.WriteString(htmlRawStr + "\n")
+	// 	if osErr != nil {
+	// 		fmt.Printf("error writing to file {%v}: %v", filename, osErr)
+	// 	}
+	// }
 
 	// TODO: make a processing file to process and parse the returned strings
 
